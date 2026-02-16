@@ -34,6 +34,10 @@
 #define MAX_WSA_CODEC_NAME_LENGTH 80
 #define MSM_DT_MAX_PROP_SIZE 80
 
+#ifdef CONFIG_MACH_XIAOMI_MIDO
+#define EXT_PA_MODE  5
+#endif
+
 enum {
 	DIG_CDC,
 	ANA_CDC,
@@ -62,6 +66,7 @@ struct msm_asoc_mach_data {
 	int ext_pa;
 	int us_euro_gpio;
 	int spk_ext_pa_gpio;
+#ifdef CONFIG_MACH_XIAOMI_YSL
 	int spk_ext_pa_gpio_lc;
 	int spk_hs_switch_gpio;
 	struct delayed_work pa_gpio_work;
@@ -69,6 +74,7 @@ struct msm_asoc_mach_data {
 	struct delayed_work hs_gpio_work;
 	unsigned char pa_is_on;
 	unsigned char hs_is_on;
+#endif
 	int mclk_freq;
 	bool native_clk_set;
 	int lb_mode;
