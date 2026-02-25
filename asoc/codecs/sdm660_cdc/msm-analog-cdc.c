@@ -24,7 +24,9 @@
 #include "msm-cdc-common.h"
 #include "sdm660-cdc-irq.h"
 #include "msm-analog-cdc-regmap.h"
+#ifndef CONFIG_MACH_XIAOMI_YSL
 #include <asoc/sdm660-common.h>
+#endif
 #include <asoc/wcd-mbhc-v2-api.h>
 #ifdef CONFIG_MACH_XIAOMI_YSL
 #include <linux/gpio.h>
