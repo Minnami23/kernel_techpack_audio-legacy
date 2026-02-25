@@ -423,10 +423,11 @@ static int enable_spk_ext_pa(struct snd_soc_component *component, int enable)
 {
 	struct snd_soc_card *card = component->card;
 	struct msm_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
+#ifndef CONFIG_MACH_XIAOMI_MIDO
+	int ret;
+#endif
 #ifdef CONFIG_MACH_XIAOMI_MIDO
 	int pa_mode = EXT_PA_MODE;
-#else
-	int ret;
 #endif
 
 	if (!gpio_is_valid(pdata->spk_ext_pa_gpio)) {
@@ -1739,6 +1740,18 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	 * 210-290 == Button 2
 	 * 360-680 == Button 3
 	 */
+#ifdef CONFIG_MACH_XIAOMI_MIDO
+	btn_low[0] = 73;
+	btn_high[0] = 73;
+	btn_low[1] = 233;
+	btn_high[1] = 233;
+	btn_low[2] = 438;
+	btn_high[2] = 438;
+	btn_low[3] = 438;
+	btn_high[3] = 438;
+	btn_low[4] = 438;
+	btn_high[4] = 438;
+#else
 	btn_low[0] = 91;
 	btn_high[0] = 91;
 	btn_low[1] = 259;
@@ -1749,6 +1762,7 @@ static void *def_msm8952_wcd_mbhc_cal(void)
 	btn_high[3] = 488;
 	btn_low[4] = 488;
 	btn_high[4] = 488;
+#endif
 
 	return msm8952_wcd_cal;
 }
@@ -1799,7 +1813,9 @@ static int msm_audrx_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_ignore_suspend(dapm, "DMIC2");
 	snd_soc_dapm_ignore_suspend(dapm, "WSA_SPK OUT");
 	snd_soc_dapm_ignore_suspend(dapm, "LINEOUT");
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 	snd_soc_dapm_ignore_suspend(dapm, "Ext Spk");
+#endif
 
 	snd_soc_dapm_sync(dapm);
 
