@@ -548,17 +548,23 @@ static int msm_pcm_capture_prepare(struct snd_pcm_substream *substream)
 			ret = q6asm_open_read_v5(prtd->audio_client,
 				FORMAT_LINEAR_PCM,
 				bits_per_sample, false, ENC_CFG_ID_NONE);
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 		else {
 		if(q6core_get_avs_version() < Q6_SUBSYS_AVS2_8 ) {
 			ret = q6asm_open_read_v3(prtd->audio_client, 
 				FORMAT_LINEAR_PCM,
 				bits_per_sample);
 		} else {
+#else
+		else
+#endif
 			ret = q6asm_open_read_v4(prtd->audio_client,
 				FORMAT_LINEAR_PCM,
 				bits_per_sample, false, ENC_CFG_ID_NONE);
+#ifdef CONFIG_MACH_XIAOMI_MIDO
+			}
 		}
-		}
+#endif
 		if (ret < 0) {
 			pr_err("%s: q6asm_open_read failed\n", __func__);
 			q6asm_audio_client_free(prtd->audio_client);

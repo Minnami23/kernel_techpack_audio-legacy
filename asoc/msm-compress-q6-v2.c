@@ -1467,6 +1467,7 @@ static int msm_compr_configure_dsp_for_playback
 				prtd->codec, bits_per_sample,
 				ac->stream_id,
 				prtd->gapless_state.use_dsp_gapless_mode);
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 		else {
 			if (q6core_get_avs_version() < Q6_SUBSYS_AVS2_8) {
 				ret = q6asm_stream_open_write_v3(ac,
@@ -1474,14 +1475,18 @@ static int msm_compr_configure_dsp_for_playback
 					ac->stream_id,
 					prtd->gapless_state.use_dsp_gapless_mode);
 			} else {
+#else
+		else
+#endif
 
 			ret = q6asm_stream_open_write_v4(ac,
 				prtd->codec, bits_per_sample,
 				ac->stream_id,
 				prtd->gapless_state.use_dsp_gapless_mode);
-
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 			}
 		}
+#endif
 
 		if (ret < 0) {
 			pr_err("%s:ASM open write err[%d] for compr type[%d]\n",
@@ -1634,17 +1639,22 @@ static int msm_compr_configure_dsp_for_capture(struct snd_compr_stream *cstream)
 			ret = q6asm_open_read_v5(prtd->audio_client,
 					prtd->codec, bits_per_sample,
 					compress_ts, enc_cfg_id);
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 		else {
 			if (q6core_get_avs_version() < Q6_SUBSYS_AVS2_8) {
 				ret = q6asm_open_read_v3(prtd->audio_client, 
-						prtd->codec, bits_per_sample,
-						compress_ts, enc_cfg_id);
+						prtd->codec, bits_per_sample);
 			} else {
+#else
+		else
+#endif
 			ret = q6asm_open_read_v4(prtd->audio_client,
 					prtd->codec, bits_per_sample,
 					compress_ts, enc_cfg_id);
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 			}
 		}
+#endif
 		if (ret < 0) {
 			pr_err("%s: q6asm_open_read failed:%d\n",
 					__func__, ret);
@@ -2889,6 +2899,7 @@ static int msm_compr_trigger(struct snd_compr_stream *cstream, int cmd)
 				prtd->codec, bits_per_sample,
 				stream_id,
 				prtd->gapless_state.use_dsp_gapless_mode);
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 		else {
 			if (q6core_get_avs_version() < Q6_SUBSYS_AVS2_8) {
 				rc = q6asm_stream_open_write_v3(prtd->audio_client,
@@ -2896,12 +2907,17 @@ static int msm_compr_trigger(struct snd_compr_stream *cstream, int cmd)
 				stream_id,
 				prtd->gapless_state.use_dsp_gapless_mode);
 			} else {
+#else
+		else
+#endif
 			rc = q6asm_stream_open_write_v4(prtd->audio_client,
 				prtd->codec, bits_per_sample,
 				stream_id,
 				prtd->gapless_state.use_dsp_gapless_mode);
+#ifdef CONFIG_MACH_XIAOMI_MIDO
 			}
 		}
+#endif
 		if (rc < 0) {
 			pr_err("%s: Session out open failed for gapless [%d]\n",
 				__func__, rc);
