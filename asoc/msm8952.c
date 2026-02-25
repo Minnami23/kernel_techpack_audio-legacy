@@ -37,14 +37,6 @@ enum btsco_rates {
 	RATE_16KHZ_ID,
 };
 
-/* dummy definition of deprecated FE DAI's*/
-enum {
-	MSM_FRONTEND_DAI_CS_VOICE = 39,
-	MSM_FRONTEND_DAI_VOICE2,
-	MSM_FRONTEND_DAI_VOLTE,
-	MSM_FRONTEND_DAI_VOWLAN,
-};
-
 static int msm8952_auxpcm_rate = 8000;
 static int msm_btsco_rate = BTSCO_RATE_8KHZ;
 static int msm_btsco_ch = 1;
@@ -1807,6 +1799,7 @@ static int msm_audrx_init(struct snd_soc_pcm_runtime *rtd)
 	snd_soc_dapm_ignore_suspend(dapm, "DMIC2");
 	snd_soc_dapm_ignore_suspend(dapm, "WSA_SPK OUT");
 	snd_soc_dapm_ignore_suspend(dapm, "LINEOUT");
+	snd_soc_dapm_ignore_suspend(dapm, "Ext Spk");
 
 	snd_soc_dapm_sync(dapm);
 
@@ -3515,10 +3508,33 @@ static struct snd_soc_card *msm8952_populate_sndcard_dailinks(
 {
 	struct snd_soc_card *card = &bear_card;
 	struct snd_soc_dai_link *dailink;
-	int len1;
+	int i, len1;
 
 	card->name = dev_name(dev);
 	len1 = ARRAY_SIZE(msm8952_dai);
+	if (of_property_read_bool(dev->of_node,
+		"qcom,use-legacy-voice-cpu-dais")) {
+		dev_info(dev, "%s(): Use legacy voice cpu dais\n",
+				__func__);
+		for (i = 0; i < len1; i++) {
+			switch (msm8952_dai[i].id) {
+				case MSM_FRONTEND_DAI_CS_VOICE:
+					msm8952_dai[i].cpu_dai_name = "CS-VOICE";
+					break;
+				case MSM_FRONTEND_DAI_VOICE2:
+					msm8952_dai[i].cpu_dai_name = "Voice2";
+					break;
+				case MSM_FRONTEND_DAI_VOLTE:
+					msm8952_dai[i].cpu_dai_name = "VoLTE";
+					break;
+				case MSM_FRONTEND_DAI_VOWLAN:
+					msm8952_dai[i].cpu_dai_name = "VoWLAN";
+					break;
+				default:
+					break;
+			}
+		}
+	}
 	memcpy(msm8952_dai_links, msm8952_dai, sizeof(msm8952_dai));
 	dailink = msm8952_dai_links;
 
@@ -3820,7 +3836,11 @@ parse_mclk_freq:
 	}
 
 	pdata->spk_ext_pa_gpio_p = of_parse_phandle(pdev->dev.of_node,
+#ifdef CONFIG_MACH_XIAOMI_MIDO
+							"qcom,cdc-ext-pa-gpios", 0);
+#else
 							spk_ext_pa, 0);
+#endif
 	ret = is_us_eu_switch_gpio_support(pdev, pdata);
 	if (ret < 0) {
 		pr_err("%s: failed to is_us_eu_switch_gpio_support %d\n",
