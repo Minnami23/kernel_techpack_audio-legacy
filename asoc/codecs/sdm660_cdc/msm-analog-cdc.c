@@ -8,7 +8,6 @@
 #include <linux/printk.h>
 #include <linux/debugfs.h>
 #include <linux/delay.h>
-#include <linux/gpio.h>
 #include <linux/regulator/consumer.h>
 #include <linux/workqueue.h>
 #include <linux/regmap.h>
@@ -25,8 +24,12 @@
 #include "msm-cdc-common.h"
 #include "sdm660-cdc-irq.h"
 #include "msm-analog-cdc-regmap.h"
+#include <asoc/sdm660-common.h>
 #include <asoc/wcd-mbhc-v2-api.h>
+#ifdef CONFIG_MACH_XIAOMI_YSL
+#include <linux/gpio.h>
 #include "../../msm8952.h"
+#endif
 
 #define DRV_NAME "pmic_analog_codec"
 #define SDM660_CDC_RATES (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |\
